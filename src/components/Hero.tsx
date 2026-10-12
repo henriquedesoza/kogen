@@ -17,7 +17,7 @@ export function Hero() {
         src={IMG.hero}
         alt=""
         fill
-        priority
+        loading="eager"
         sizes="100vw"
         className="object-cover object-center"
       />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { nav, site } from "@/lib/content";
 import { useLang } from "@/lib/lang";
 
@@ -23,9 +23,13 @@ export function Nav() {
     };
   }, [open]);
 
-  const go = (id: string) => {
+  // preventDefault mantém a rolagem suave; replaceState deixa o hash no
+  // endereço pra o link da seção ser copiável
+  const go = (e: MouseEvent, id: string) => {
+    e.preventDefault();
     setOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    history.replaceState(null, "", `#${id}`);
   };
 
   return (
@@ -38,8 +42,9 @@ export function Nav() {
         }`}
       >
         <div className="mx-auto flex h-[74px] max-w-[1360px] items-center justify-between px-5 sm:px-8">
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          <a
+            href="#topo"
+            onClick={(e) => go(e, "topo")}
             className="group flex items-baseline gap-3"
             aria-label={site.name}
           >
@@ -49,17 +54,18 @@ export function Nav() {
             <span className="ja text-sm leading-none text-gold-3 transition-colors group-hover:text-gold">
               {site.kanji}
             </span>
-          </button>
+          </a>
 
           <nav className="hidden items-center gap-8 lg:flex">
             {nav.map((item) => (
-              <button
+              <a
                 key={item.id}
-                onClick={() => go(item.id)}
-                className="relative text-[0.78rem] tracking-[0.16em] text-ash uppercase transition-colors hover:text-bone after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-gold after:transition-all after:duration-300 hover:after:w-full"
+                href={`#${item.id}`}
+                onClick={(e) => go(e, item.id)}
+                className="relative inline-block text-[0.78rem] tracking-[0.16em] text-ash uppercase transition-colors hover:text-bone after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-gold after:transition-all after:duration-300 hover:after:w-full"
               >
                 {t(item.label)}
-              </button>
+              </a>
             ))}
           </nav>
 
@@ -72,12 +78,13 @@ export function Nav() {
               {t(site.langSwitch)}
             </button>
 
-            <button
-              onClick={() => go("reserva")}
+            <a
+              href="#reserva"
+              onClick={(e) => go(e, "reserva")}
               className="hidden border border-gold-3 px-5 py-2.5 text-[0.7rem] tracking-[0.22em] text-gold uppercase transition-colors duration-300 hover:bg-gold hover:text-ink sm:block"
             >
               {t(site.reserveNav)}
-            </button>
+            </a>
 
             <button
               onClick={() => setOpen((v) => !v)}
@@ -105,9 +112,10 @@ export function Nav() {
         <div className="flex h-full flex-col justify-center px-8 pt-[74px]">
           <nav className="flex flex-col gap-1">
             {nav.map((item, i) => (
-              <button
+              <a
                 key={item.id}
-                onClick={() => go(item.id)}
+                href={`#${item.id}`}
+                onClick={(e) => go(e, item.id)}
                 style={{ transitionDelay: open ? `${120 + i * 55}ms` : "0ms" }}
                 className={`flex items-baseline gap-4 border-b border-line/60 py-4 text-left transition-all duration-500 ${
                   open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
@@ -117,18 +125,19 @@ export function Nav() {
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="font-display text-[1.7rem] text-bone">{t(item.label)}</span>
-              </button>
+              </a>
             ))}
           </nav>
 
-          <button
-            onClick={() => go("reserva")}
-            className={`mt-9 border border-gold px-6 py-4 text-[0.72rem] tracking-[0.24em] text-gold uppercase transition-all duration-500 ${
+          <a
+            href="#reserva"
+            onClick={(e) => go(e, "reserva")}
+            className={`mt-9 inline-block border border-gold px-6 py-4 text-[0.72rem] tracking-[0.24em] text-gold uppercase transition-all duration-500 ${
               open ? "translate-y-0 opacity-100 delay-450" : "translate-y-4 opacity-0"
             }`}
           >
             {t(site.reserveNav)}
-          </button>
+          </a>
         </div>
       </div>
     </>

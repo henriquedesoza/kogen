@@ -17,6 +17,7 @@ export function Reserve() {
   const [errors, setErrors] = useState<Errors>({});
   const [state, setState] = useState<"idle" | "sending" | "ok">("idle");
   const [minDate, setMinDate] = useState("");
+  const [sent, setSent] = useState<{ name: string; date: string; time: string } | null>(null);
 
   useEffect(() => setMinDate(new Date().toISOString().slice(0, 10)), []);
 
@@ -48,7 +49,17 @@ export function Reserve() {
     if (Object.keys(next).length > 0) return;
 
     setState("sending");
+    setSent({ name: String(data.get("name") ?? "").trim(), date, time });
     window.setTimeout(() => setState("ok"), 900);
+  };
+
+  // "T00:00:00" força parsing local; sem isso o fuso derruba um dia
+  const quando = (date: string, time: string) => {
+    const d = new Date(`${date}T00:00:00`).toLocaleDateString(
+      lang === "pt" ? "pt-BR" : "en-GB",
+      { day: "2-digit", month: "long", year: "numeric" },
+    );
+    return lang === "pt" ? `${d} às ${time}` : `${d} at ${time}`;
   };
 
   const err = (k: keyof Errors) =>
@@ -124,6 +135,16 @@ export function Reserve() {
                   ✓
                 </span>
                 <h3 className="mt-7 font-display text-[1.8rem] text-bone">{t(r.okTitle)}</h3>
+                {sent && (
+                  <div className="mt-5 border-y border-line/80 py-4">
+                    <p className="font-display text-[1.35rem] leading-tight text-gold-2">
+                      {sent.name}
+                    </p>
+                    <p className="mt-1.5 text-[0.85rem] text-ash-2">
+                      {quando(sent.date, sent.time)}
+                    </p>
+                  </div>
+                )}
                 <p className="mt-4 max-w-sm text-[0.95rem] leading-relaxed text-ash">
                   {t(r.okBody)}
                 </p>
@@ -131,6 +152,7 @@ export function Reserve() {
                   onClick={() => {
                     setState("idle");
                     setErrors({});
+                    setSent(null);
                     (document.getElementById("res-form") as HTMLFormElement | null)?.reset();
                   }}
                   className="mt-8 border border-line-2 px-7 py-3.5 text-[0.7rem] tracking-[0.22em] text-bone uppercase transition-colors hover:border-gold hover:text-gold"

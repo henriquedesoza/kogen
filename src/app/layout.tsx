@@ -1,17 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { LangProvider } from "@/lib/lang";
 import "./globals.css";
 
-const display = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  weight: ["300", "400", "500", "600", "700"],
+// same font pair as the other Sites projects (loja, site-clinica, portfolio-dev, landing-financeiro)
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin", "latin-ext"],
   display: "swap",
 });
 
-const body = Inter({
-  variable: "--font-inter",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin", "latin-ext"],
   display: "swap",
 });
@@ -55,7 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="pt-BR"
       data-scroll-behavior="smooth"
-      className={`${display.variable} ${body.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="grain min-h-screen">
         <LangProvider>{children}</LangProvider>
